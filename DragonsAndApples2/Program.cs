@@ -18,7 +18,7 @@ namespace DragonsAndApples2
             //Console.WriteLine(dragon.InfoDragon());
             ItemsDataStorage_Memory adminItems = new ItemsDataStorage_Memory();
             int nritems;
-            string optiune;
+            string optiune,name,damage;
 
             Item sword = new Item("Sword",10,10);
             Item Spear = new Item("Spear",20,20);
@@ -26,14 +26,15 @@ namespace DragonsAndApples2
             Console.WriteLine(sword.Info());
             Console.WriteLine(Spear.Info());
             Console.WriteLine(Axe.Info());
+            Console.WriteLine("1.Add Sword to inventory.");
+            Console.WriteLine("2.Add Spear to inventory.");
+            Console.WriteLine("3.Add Axe to inventory.");
+            Console.WriteLine("4.Show Inventory.");
+            Console.WriteLine("5.Search by Name.");
+            Console.WriteLine("6.Search by Damage.");
+            Console.WriteLine("0.Exit");
             do
-            {
-                Console.WriteLine("1.Add Sword to inventory.");
-                Console.WriteLine("2.Add Spear to inventory.");
-                Console.WriteLine("3.Add Axe to inventory.");
-                Console.WriteLine("4.Show Inventory.");
-                Console.WriteLine("0.Exit");
-                
+            {  
                 Console.Write("Chose: ");
                 optiune = Console.ReadLine();
 
@@ -48,6 +49,20 @@ namespace DragonsAndApples2
                     case "4":
                         Item[] items = adminItems.GetItems(out nritems);
                         ShowItems(items,nritems);
+                        break;
+                    case "5":
+                        Item[] fitems = adminItems.GetItems(out nritems);
+                        Console.Write("Name: ");
+                        name=Console.ReadLine().ToLower();
+                        for(int i=0;i<=nritems;i++)
+                        {
+                            if (fitems[i].Name.ToLower()==name)
+                            {
+                                Console.Write("Item Found: ");
+                                ShowItem(fitems, i);
+                            }
+                        }
+                       
                         break;
                     case "0":
                         return;
@@ -142,6 +157,12 @@ namespace DragonsAndApples2
                 string infoitem = items[i].Info();
                 Console.WriteLine(infoitem);
             }
+        }
+
+        public static void ShowItem(Item[] item,int position)
+        {
+            string infoitem = item[position].Info();
+            Console.WriteLine(infoitem);
         }
     }
 }
