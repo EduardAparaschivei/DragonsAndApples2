@@ -8,8 +8,8 @@ namespace Entities
 {
     public class Dragon
     {
-        string Name;
-        int Difficulty {  get; set; }
+        public string Name { get; set; }
+        public int Difficulty {  get; set; }
         public int Loot {  get; set; }
         public float HealthPoints { get; set; }
 

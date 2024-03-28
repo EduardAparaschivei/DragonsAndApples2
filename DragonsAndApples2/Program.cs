@@ -12,42 +12,95 @@ namespace DragonsAndApples2
     {
         static void Main()
         {
-            //Player player = new Player();
-            //char choice,choice2;
-            //Dragon dragon = new Dragon("Asmogold", 10, 100);
-            //Console.WriteLine(dragon.InfoDragon());
-            ItemsDataStorage_Memory adminItems = new ItemsDataStorage_Memory();
-            int nritems;
-            string optiune;
 
-            Item sword = new Item("Sword",10,10);
-            Item Spear = new Item("Spear",20,20);
-            Item Axe = new Item("Axe",30,30);
-            Console.WriteLine(sword.Info());
-            Console.WriteLine(Spear.Info());
-            Console.WriteLine(Axe.Info());
+            ItemsDataStorage_Memory adminItems = new ItemsDataStorage_Memory();
+            DragonsDataStorage_Memory adminDragons = new DragonsDataStorage_Memory();
+            int nritems,nrdragons;
+            string optiune, name, damage;
+
+            Item sword = new Item("Sword", 10, 10);
+            Item Spear = new Item("Spear", 20, 20);
+            Item Axe = new Item("Axe", 30, 30);
+
+            Dragon Aor = new Dragon("Aor", 2, 200);
+            Dragon Bor = new Dragon("Bor", 4, 400);
+            Dragon Nor = new Dragon("Nor", 6, 600);
+
+            Console.WriteLine("1.Meniu Items");
+            Console.WriteLine("2.Meniu Dragoni");
+
+            Console.Write("Alege: ");
+            optiune = Console.ReadLine();
+            //Interfata
+            switch (optiune)
+            {
+
+
+
+                //Meniu pentru Items
+                case "1":
+            Console.WriteLine("1.Add Sword to inventory.");
+            Console.WriteLine("2.Add Spear to inventory.");
+            Console.WriteLine("3.Add Axe to inventory.");
+            Console.WriteLine("4.Show Inventory.");
+            Console.WriteLine("5.Search by Name.");
+            Console.WriteLine("6.Search by Damage.");
+            Console.WriteLine("0.Exit");
             do
             {
-                Console.WriteLine("1.Add Sword to inventory.");
-                Console.WriteLine("2.Add Spear to inventory.");
-                Console.WriteLine("3.Add Axe to inventory.");
-                Console.WriteLine("4.Show Inventory.");
-                Console.WriteLine("0.Exit");
-                
                 Console.Write("Chose: ");
                 optiune = Console.ReadLine();
 
-                switch(optiune)
+                switch (optiune)
                 {
                     case "1":
-                       adminItems.AddItem(sword); break;
+                        adminItems.AddItem(sword); break;
                     case "2":
                         adminItems.AddItem(Spear); break;
                     case "3":
                         adminItems.AddItem(Axe); break;
                     case "4":
                         Item[] items = adminItems.GetItems(out nritems);
-                        ShowItems(items,nritems);
+                        ShowItems(items, nritems);
+                        break;
+                    case "5":
+                        Console.Write("Numele item-ului: ");
+                        string srchname = Console.ReadLine();
+                        Item[] Sitems = adminItems.SearchItemByName(srchname);
+                        if (Sitems.Length == 0)
+                        {
+                            Console.WriteLine("Nu s-a gasit Item.");
+                        }
+                        else
+                        {
+                            foreach (Item item in Sitems)
+                            {
+                                Console.WriteLine("S-a gasit Item-ul!");
+                                Console.WriteLine(item.Info());
+                            }
+                        }
+                        break;
+                    case "6":
+                        bool check;
+                        int Sdamage;
+                        do
+                        {
+                            Console.Write("Care este damage-ul: ");
+                            check = Int32.TryParse(Console.ReadLine(), out Sdamage);
+                        } while (!check);
+                        Sitems = adminItems.SearchItemByDamage(Sdamage);
+                        if (Sitems.Length == 0)
+                        {
+                            Console.WriteLine("Nu s-a gasit Item.");
+                        }
+                        else
+                        {
+                            foreach (Item item in Sitems)
+                            {
+                                Console.WriteLine("S-a gasit Item-ul!");
+                                Console.WriteLine(item.Info());
+                            }
+                        }
                         break;
                     case "0":
                         return;
@@ -57,9 +110,94 @@ namespace DragonsAndApples2
 
                 }
             } while (optiune != "0");
+            break;
+
+                //Meniu pentru dragoni
+                case "2":
+                    Console.WriteLine("1.Adauga-l pe Aor");
+                    Console.WriteLine("2.Adauga-l pe Bor");
+                    Console.WriteLine("3.Adauga-l pe Nor");
+                    Console.WriteLine("4.Arata dragonii salvati.");
+                    Console.WriteLine("5.Cauta dupa nume.");
+                    Console.WriteLine("6.Cauta dupa dificultate.");
+                    Console.WriteLine("0.Exit");
+                    do
+                    {
+                        Console.Write("Alege: ");
+                        optiune = Console.ReadLine();
+
+                        switch (optiune)
+                        {
+                            case "1":
+                                adminDragons.AddDragon(Aor); break;
+                            case "2":
+                                adminDragons.AddDragon(Bor); break;
+                            case "3":
+                                adminDragons.AddDragon(Nor); break;
+                            case "4":
+                                Dragon[] dragons = adminDragons.GetDragons(out nrdragons);
+                                ShowDragons(dragons, nrdragons);
+                                break;
+                            case "5":
+                                Console.Write("Numele dragonului: ");
+                                string srchname = Console.ReadLine();
+                                Dragon[] Sdragons = adminDragons.SearchDragonByName(srchname);
+                                if (Sdragons.Length == 0)
+                                {
+                                    Console.WriteLine("Nu s-a gasit dragon-ul.");
+                                }
+                                else
+                                {
+                                    foreach (Dragon dragon in Sdragons)
+                                    {
+                                        Console.WriteLine("S-a gasit dragonul!");
+                                        Console.WriteLine(dragon.InfoDragon());
+                                    }
+                                }
+                                break;
+                            case "6":
+                                bool check;
+                                int Sdamage;
+                                do
+                                {
+                                    Console.Write("Care este dificultatea: ");
+                                    check = Int32.TryParse(Console.ReadLine(), out Sdamage);
+                                } while (!check);
+                                Sdragons = adminDragons.SearchDragonByDifficulty(Sdamage);
+                                if (Sdragons.Length == 0)
+                                {
+                                    Console.WriteLine("Nu s-a gasit dragonul.");
+                                }
+                                else
+                                {
+                                    foreach (Dragon dragon in Sdragons)
+                                    {
+                                        Console.WriteLine("S-a gasit dragonul!");
+                                        Console.WriteLine(dragon.InfoDragon());
+                                    }
+                                }
+                                break;
+                            case "0":
+                                return;
+                            default:
+                                Console.WriteLine("Error, try again!");
+                                break;
+
+                        }
+                    } while (optiune != "0");
+
+                    break;
+
+                default:
+                    Console.WriteLine("Nu exista optiunea.");
+                    break;
+        }
+        
+        
+        
 
 
-
+            //Nu am nevoie
             /**
             do
             {
@@ -143,5 +281,15 @@ namespace DragonsAndApples2
                 Console.WriteLine(infoitem);
             }
         }
+        public static void ShowDragons(Dragon[] dragons, int nrDragons)
+        {
+            Console.WriteLine("The dragons are:");
+            for (int i = 0; i < nrDragons; i++)
+            {
+                string infodragon = dragons[i].InfoDragon();
+                Console.WriteLine(infodragon);
+            }
+        }
+
     }
 }

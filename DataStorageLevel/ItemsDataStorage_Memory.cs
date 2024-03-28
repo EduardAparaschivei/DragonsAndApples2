@@ -31,5 +31,31 @@ namespace DataStorageLevel
             nrItems = this.nrItems;
             return items;
         }
+
+        public Item[] SearchItemByName(string search)
+        {
+            List<Item> FoundItems = new List<Item>();
+            foreach(Item item in items)
+            {
+                if(item != null && item.Name.ToLower() == search.ToLower())
+                {
+                    FoundItems.Add(item);
+                }
+            }
+            return FoundItems.ToArray();
+        }
+
+        public Item[] SearchItemByDamage(int  damage)
+        {
+            List<Item> Founditems = new List<Item>();
+            foreach(Item item in items) 
+            {
+                if(item != null && item.Damage == damage) 
+                {
+                    Founditems.Add(item);
+                }
+            }
+            return Founditems.ToArray();
+        }
     }
 }

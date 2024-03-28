@@ -8,7 +8,7 @@ namespace Entities
 {
     public class Item
     {
-        string Name;
+        public string Name;
         public int Damage {  get; set; }
         public int Condition { get; set; }
 
