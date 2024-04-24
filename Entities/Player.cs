@@ -8,13 +8,35 @@ namespace Entities
 {
     public class Player
     {
-        string Name;
+        //constante
+        private const char SeparatorFisier = ';';
+
+        private const int NAME = 0;
+        private const int STRENGHT = 1;
+        private const int INTELLIGENCE = 2;
+        private const int AGILITY = 3;
+        private const int MONEY = 4;
+        private const int HEALTHPOINTS = 5;
+        private const int ABILITYPOINTS = 6;
+        private const int XP = 7;
+        private const int LEVEL = 8;
+        private const int SCOR = 9;
+        private const int STAGE = 10;
+        
+        public string Name;
         public float HealthPoints { get; set; }
         public int Strength { get; set; }
         public int Intelligence { get; set; }
         public int Agility { get; set; }
-        public float Money { get; set; }
-        public int AbilityPoints { get; set; } = 5;
+        public int Money { get; set; }
+        public int AbilityPoints { get; set; }
+        public int xp { get; set; }
+        public int Level { get; set; }
+        public int scor {  get; set; }
+        public int stage { get; set; }
+
+
+
 
         static int AbilityCapPoints = 10;
         public Player()
@@ -25,20 +47,15 @@ namespace Entities
             Agility = 0;
             Money = 0;
             HealthPoints = 100;
+            AbilityPoints = 5;
+            xp = 0;
+            Level = 1;
+            scor = 0;
+            stage = 1;
 
         }
 
-        public Player(string name)
-        {
-            Name = name;
-            Strength = 0;
-            Intelligence = 0;
-            Agility = 0;
-            Money = 0;
-            HealthPoints = 100;
-        }
-
-        public Player(string name, int strength, int intelligence, int agility)
+        public Player(string name, int strength, int intelligence, int agility, int level)
         {
             Name = name;
             Strength = strength;
@@ -46,10 +63,63 @@ namespace Entities
             Agility = agility;
             Money = 0;
             HealthPoints = 100;
+            AbilityPoints = 5;
+            xp = 0;
+            Level = level;
+            scor = 0;
+            stage =1;
+        }
+
+        public Player(string linieFisier)
+        {
+            string[] dateFisier = linieFisier.Split(SeparatorFisier);
+            this.Name = dateFisier[NAME];
+            this.Strength = Convert.ToInt32(dateFisier[STRENGHT]);
+            this.Intelligence = Convert.ToInt32(dateFisier[INTELLIGENCE]);
+            this.Agility = Convert.ToInt32(dateFisier[AGILITY]);
+            this.Money = Convert.ToInt32(dateFisier[MONEY]);
+            this.HealthPoints = float.Parse(dateFisier[HEALTHPOINTS]);
+            this.AbilityPoints = Convert.ToInt32(dateFisier[ABILITYPOINTS]);
+            this.xp = Convert.ToInt32(dateFisier[XP]);
+            this.Level = Convert.ToInt32(dateFisier[LEVEL]);
+            this.scor = Convert.ToInt32(dateFisier[SCOR]);
+            this.stage = Convert.ToInt32(dateFisier[STAGE]);
+
+        }
+
+        public string ConversieLaSir_PentruFisier()
+        {
+            string obiectPlayerpentruFisier = string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}",
+                SeparatorFisier,
+                (Name ?? "Necunoscut"),
+                Strength.ToString(),
+                Intelligence.ToString(),
+                Agility.ToString(),
+                Money.ToString(),
+                HealthPoints.ToString(),
+                AbilityPoints.ToString(),
+                xp.ToString(),
+                Level.ToString(),
+                scor.ToString(),
+                stage.ToString());
+            return obiectPlayerpentruFisier;
+
         }
         public string Info()
         {
-            return $"Name: {Name} Strength: {Strength} Intelligence: {Intelligence} Agility: {Agility} Money: {Money}";
+            string infoPlayer = string.Format(" Nume:{0} S:{1} I:{2} A:{3} Money:{4} HP:{5} AP:{6} XP:{7} Level:{8} Scor:{9}",
+                this.Name ?? "NECUNOSCUT",
+                this.Strength,
+                this.Intelligence,
+                this.Agility,
+                this.Money,
+                this.HealthPoints,
+                this.AbilityPoints,
+                this.xp,
+                this.Level,
+                this.scor);
+            return infoPlayer;
+           
         }
 
 
