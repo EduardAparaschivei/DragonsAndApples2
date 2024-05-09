@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,10 @@ namespace InterfataUtilizator_WindowsForms
 {
     public partial class MainMenu : Form
     {
+        static string numeFisier = ConfigurationManager.AppSettings["NumeFisier"];
+        static string locatieFisierSolutie = Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+        string caleCompletaFisier = locatieFisierSolutie + "\\" + numeFisier;
+
         public int pasx = 190;
         public int pasy = 30;
         public int latime = 300;
@@ -85,9 +91,26 @@ namespace InterfataUtilizator_WindowsForms
 
         private void LoadGame(object sender, EventArgs e) 
         {
-            var loadGame = new MainGame();
-            loadGame.Show();
-            this.Hide();
+            if(File.Exists(caleCompletaFisier))
+            {
+                if(new FileInfo(caleCompletaFisier).Length == 0)
+                {
+                    btnLoadGame.Text = "Fisier Gol!";
+                    btnLoadGame.ForeColor = Color.Red;
+                }
+                else
+                {
+                    var loadGame = new MainGame();
+                    loadGame.Show();
+                    this.Hide();
+                }
+            }else
+            {
+                btnLoadGame.Text = "Fisier Lipsa!";
+                btnLoadGame.ForeColor = Color.Red;
+            }
+            
+            
         }
 
         private void Exitgame(object sender, EventArgs e)
