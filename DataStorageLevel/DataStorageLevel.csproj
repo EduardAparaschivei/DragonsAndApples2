@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="DragonsDataStorage_FisierText.cs" />
     <Compile Include="DragonsDataStorage_Memory.cs" />
+    <Compile Include="ItemsDataStorage_FisierText.cs" />
     <Compile Include="ItemsDataStorage_Memory.cs" />
     <Compile Include="PlayerDataStorage_FisierText.cs" />
     <Compile Include="PlayerDataStorage_Memory.cs" />

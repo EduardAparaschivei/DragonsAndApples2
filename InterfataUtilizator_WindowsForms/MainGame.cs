@@ -18,7 +18,9 @@ namespace InterfataUtilizator_WindowsForms
     {
         PlayerDataStorage_FisierText adminPlayers;
         DragonsDataStorage_FisierText adminDragoni;
+        ItemsDataStorage_FisierText adminItems;
 
+        int selecteditem = -1;
         Random random = new Random();
 
         static string numeFisier = ConfigurationManager.AppSettings["NumeFisier"];
@@ -28,9 +30,13 @@ namespace InterfataUtilizator_WindowsForms
         static string numeFisier2 = ConfigurationManager.AppSettings["NumeFisier2"];
         string caleCompletaFisier2 = locatieFisierSolutie + "\\" + numeFisier2;
 
+        static string numeFisier3 = ConfigurationManager.AppSettings["NumeFisier3"];
+        string caleCompletaFisier3 = locatieFisierSolutie + "\\" + numeFisier3;
+
         public Player player;
         public string linieFisier;
         public Dragon DragonGlobal;
+        public Item ItemGlobal;
         public int pass;
 
         #region Panel,Labels,TextBoxes,Buttons
@@ -63,6 +69,8 @@ namespace InterfataUtilizator_WindowsForms
         private Button btnFight;
         private Button btnAttack;
         private Button btnFlee;
+        private Button btnEchipeazaItem;
+        private Button btnDezechipeazaItem;
         #endregion
 
         private Label lblNumeDragon;
@@ -70,19 +78,35 @@ namespace InterfataUtilizator_WindowsForms
         private Label lblLootDragon;
         private Label lblHPDragon;
 
+        private Label lblInfItemSelectat;
+
         private Label Informatii;
 
+        private Label[] lblsItem;
+        private Label[] lblsItemDamage;
+        private Label[] lblsItemCondition;
+
+        private GroupBox gpbInventar;
+        private Button gpbSelect;
+        private RadioButton[] rdbIteme;
+
+        private RadioButton rdbitem;
+
         private const int latime_control = 100;
+        private const int gpb_latime = 50;
         private const int inaltime_control = 50;
         private const int dimensiune_pas_x = 140;
         private const int dimensiune_pas_y = 30;
+
+        private const int gpb_pas_y = 30;
+        private const int gpb_pas_x = 10;
         public MainGame()
         {
             InitializeComponent();
             adminPlayers = new PlayerDataStorage_FisierText(caleCompletaFisier);
             int nrPlayers = 0;
             Player[] players = adminPlayers.GetPlayers(out nrPlayers);
-            using(StreamReader sr = new StreamReader(caleCompletaFisier))
+            using (StreamReader sr = new StreamReader(caleCompletaFisier))
             {
                 linieFisier = sr.ReadLine();
             }
@@ -93,6 +117,9 @@ namespace InterfataUtilizator_WindowsForms
             Dragon[] dragoni = adminDragoni.GetDragons(out nrDragoni);
             DragonGlobal = new Dragon();
 
+            adminItems = new ItemsDataStorage_FisierText(caleCompletaFisier3);
+            int nrItems = 0;
+            ItemGlobal = new Item();
 
             //setare proprietati
             this.Size = new Size(1000, 600);
@@ -118,11 +145,79 @@ namespace InterfataUtilizator_WindowsForms
             LinieDesign = new Panel();
             LinieDesign.BackColor = Color.Red;
             LinieDesign.Size = new Size(this.ClientSize.Width, 5);
-            LinieDesign.Location = new Point(0,this.ClientSize.Height-100);
+            LinieDesign.Location = new Point(0, this.ClientSize.Height - 100);
             this.Controls.Add(LinieDesign);
 
-            
+
             #endregion
+
+            gpbInventar = new GroupBox();
+            gpbInventar.Margin = new System.Windows.Forms.Padding(4);
+            gpbInventar.Name = "gpbProgrameStudiu";
+            gpbInventar.Padding = new System.Windows.Forms.Padding(4);
+            gpbInventar.Size = new System.Drawing.Size(500, 200);
+            gpbInventar.Location = new System.Drawing.Point((this.ClientSize.Width - gpbInventar.Width) / 2, (this.ClientSize.Height - gpbInventar.Height) / 2);
+            gpbInventar.TabStop = false;
+            this.Controls.Add(gpbInventar);
+
+            gpbSelect = new Button();
+            
+            gpbSelect.Text = "Foloseste";
+            gpbSelect.Size = new System.Drawing.Size(70, 40);
+            gpbSelect.Location = new System.Drawing.Point(gpb_pas_x * 20, (gpbInventar.Height-gpbSelect.Height) / 2);
+            gpbSelect.UseVisualStyleBackColor = true;
+            gpbSelect.Click += Echipare;
+            this.gpbInventar.Controls.Add(gpbSelect);
+
+
+            List<Item> iteme = adminItems.GetItems();
+            int nrIteme = iteme.Count;
+            lblsItem = new Label[nrIteme];
+            lblsItemDamage = new Label[nrIteme];
+            lblsItemCondition = new Label[nrIteme];
+            int i = 0;
+            int j = 0;
+            foreach (Item item in iteme)
+            {
+                lblsItem[i] = new Label();
+                lblsItem[i].Width = gpb_latime-10;
+                lblsItem[i].Text = item.Name;
+                lblsItem[i].Top = (i+1) * gpb_pas_y;
+                lblsItem[i].Left = (j+1) * gpb_pas_x;
+                this.gpbInventar.Controls.Add(lblsItem[i]);
+
+
+                lblsItemDamage[i] = new Label();
+                lblsItemDamage[i].Width = gpb_latime-15;
+                lblsItemDamage[i].Text = "D:"+item.Damage.ToString();
+                lblsItemDamage[i].Top = (i + 1) * gpb_pas_y;
+                lblsItemDamage[i].Left = (j + 1) * gpb_pas_x + 40;
+                this.gpbInventar.Controls.Add(lblsItemDamage[i]);
+
+
+                lblsItemCondition[i] = new Label();
+                lblsItemCondition[i].Width = gpb_latime-15;
+                lblsItemCondition[i].Text = "C:"+item.Condition.ToString();
+                lblsItemCondition[i].Top = (i + 1) * gpb_pas_y;
+                lblsItemCondition[i].Left = (j + 1) * gpb_pas_x+75;
+                this.gpbInventar.Controls.Add(lblsItemCondition[i]);
+
+                rdbitem = new RadioButton();
+                rdbitem.Name = item.ID.ToString();
+                rdbitem.Text = item.ID.ToString();
+                rdbitem.Location = new System.Drawing.Point((j+1)*gpb_pas_x+110,(i+1)*gpb_pas_y);
+                rdbitem.CheckedChanged += SelectareItem;
+                this.gpbInventar.Controls.Add(rdbitem);
+
+
+                i++;
+                if(i == 5)
+                {
+                    j = 30; 
+                    i = 0;
+                }
+            }
+
 
             #region BLoc Nume + HP
             lblNume = new Label();
@@ -317,8 +412,6 @@ namespace InterfataUtilizator_WindowsForms
             btnExplore.Click += Explorare;
             this.Controls.Add(btnExplore);
            
-
-           
             btnFight = new Button();
             btnFight.Width = latime_control;
             btnFight.Height = latime_control / 2;
@@ -328,6 +421,35 @@ namespace InterfataUtilizator_WindowsForms
             btnFight.Visible = false;
             btnFight.Click += Lupta;
             this.Controls.Add(btnFight);
+
+            btnEchipeazaItem = new Button();
+            btnEchipeazaItem.Width = latime_control;
+            btnEchipeazaItem.Height = latime_control / 2;
+            btnEchipeazaItem.Text = "Echipeaza Item";
+            btnEchipeazaItem.ForeColor = Color.OrangeRed;
+            btnEchipeazaItem.Location = new System.Drawing.Point(this.ClientSize.Width-dimensiune_pas_x, this.ClientSize.Height - 3 * dimensiune_pas_y);
+            btnEchipeazaItem.Click += Echipeaza;
+            this.Controls.Add(btnEchipeazaItem);
+
+            lblInfItemSelectat = new Label();
+            lblInfItemSelectat.Width = latime_control;
+            lblInfItemSelectat.Height = inaltime_control;
+            lblInfItemSelectat.Text = "Test";
+            lblInfItemSelectat.ForeColor = Color.Black;
+            lblInfItemSelectat.BackColor = Color.White;
+            lblInfItemSelectat.Left = this.ClientSize.Width - dimensiune_pas_x*2;
+            lblInfItemSelectat.Top = this.ClientSize.Height - 3 * dimensiune_pas_y;
+            this.Controls.Add(lblInfItemSelectat);
+            
+
+            btnDezechipeazaItem = new Button();
+            btnDezechipeazaItem.Width = latime_control;
+            btnDezechipeazaItem.Height = latime_control / 2;
+            btnDezechipeazaItem.Text = "Dezchipeaza Item";
+            btnDezechipeazaItem.ForeColor = Color.OrangeRed;
+            btnDezechipeazaItem.Location = new System.Drawing.Point(this.ClientSize.Width - dimensiune_pas_x*3, this.ClientSize.Height - 3 * dimensiune_pas_y);
+            btnDezechipeazaItem.Click += Explorare;
+            this.Controls.Add(btnDezechipeazaItem);
             #endregion
 
             #region Butoane Tip Lupta
@@ -470,6 +592,40 @@ namespace InterfataUtilizator_WindowsForms
             {
                 Informatii.Text = "Nu s-a gasit nimic!";
             }
+        }
+
+        private void SelectareItem(object sender, EventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+            if (radioButton != null && radioButton.Checked)
+            {
+                int itemID;
+                if(int.TryParse(radioButton.Name, out itemID))
+                {
+                    selecteditem = itemID;
+                }
+            }
+
+        }
+
+        private void Echipare(object sender,EventArgs e)
+        {
+            List<Item> iteme = adminItems.GetItems();
+            foreach (Item item in iteme)
+            {
+                if(item.ID == selecteditem)
+                {
+                    ItemGlobal = item;
+                }
+            }
+            gpbInventar.Visible = false;
+            lblInfItemSelectat.Text = ItemGlobal.Info();
+
+        }
+
+        private void Echipeaza(object sender,EventArgs e)
+        {
+            gpbInventar.Visible = true;
         }
 
         private void Lupta(object sender, EventArgs e)

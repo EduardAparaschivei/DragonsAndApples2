@@ -10,6 +10,7 @@ namespace DataStorageLevel
     public class ItemsDataStorage_Memory
     {
         private const int MAX_ITEMS_NR = 50;
+        private List<Item> iteme;
 
         private Item[] items;
         private int nrItems;
@@ -26,10 +27,9 @@ namespace DataStorageLevel
             nrItems++;
         }
 
-        public Item[] GetItems(out int nrItems)
+        public List<Item> GetItems()
         {
-            nrItems = this.nrItems;
-            return items;
+            return iteme;
         }
 
         public Item[] SearchItemByName(string search)
